@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:project_1/firebase/firebasemain.dart';
+import 'package:project_1/screens/auth/login/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,9 +20,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: MainPage(),
+      // Define the routes here
+      routes: {
+        '/login': (context) => LogIn(showRegisterPage: () {}),
+        // Add other routes as needed
+      },
     );
   }
 }

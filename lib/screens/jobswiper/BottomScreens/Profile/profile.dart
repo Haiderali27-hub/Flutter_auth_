@@ -8,6 +8,7 @@ import 'package:project_1/screens/jobswiper/BottomScreens/Profile/PrivacyandData
 import 'package:project_1/screens/jobswiper/BottomScreens/Profile/payment.dart';
 import 'package:project_1/screens/jobswiper/BottomScreens/Profile/personal_details.dart';
 import 'package:project_1/screens/jobswiper/BottomScreens/Profile/referral_program.dart';
+import 'package:project_1/screens/jobswiper/BottomScreens/Profile/settings.dart';
 import 'package:project_1/widgets/common_image)viewer.dart';
 
 import 'package:project_1/widgets/my_text.dart';
@@ -107,7 +108,7 @@ class Profile extends StatelessWidget {
                     onTap: () {
                       Get.to(() => PersonalDetails());
                     }),
-                ProfileOpt(text: 'Settings', onTap: () {}),
+                ProfileOpt(text: 'Settings', onTap: () {Get.to(() => Settings());}),
                 ProfileOpt(
                     text: 'Payment Method ',
                     onTap: () {

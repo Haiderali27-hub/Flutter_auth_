@@ -4,10 +4,13 @@ import 'package:get/get.dart';
 import 'package:project_1/constant.dart/global_colors.dart';
 import 'package:project_1/constant.dart/images.dart';
 import 'package:project_1/screens/auth/forgot_password/Email_verification.dart';
+import 'package:project_1/services/auth_service.dart';
 import 'package:project_1/widgets/CustomTextField.dart';
 import 'package:project_1/widgets/horizontal_button.dart';
 import 'package:project_1/widgets/loginicons.dart';
 import 'package:project_1/widgets/my_text.dart';
+
+import '../../../firebase/firebasemain.dart';
 
 class LogIn extends StatefulWidget {
   final VoidCallback showRegisterPage;
@@ -48,7 +51,6 @@ class _LogInState extends State<LogIn> {
               padding: const EdgeInsets.only(
                 left: 32,
               ),
-              //TExt
               child: MyText(
                 text: 'Welcome back! Glad to see you, Again!',
                 size: 27,
@@ -61,8 +63,6 @@ class _LogInState extends State<LogIn> {
                   left: 32,
                   right: 32,
                 ),
-
-                //Input field
                 child: Column(
                   children: [
                     CustomTextfield(
@@ -99,7 +99,6 @@ class _LogInState extends State<LogIn> {
               onPressed: logIn,
               text: 'Login',
             ),
-            //Or login with
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 32),
               child: Row(
@@ -131,7 +130,19 @@ class _LogInState extends State<LogIn> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Loginicon(img: facebook, onTap: () {}),
-                    Loginicon(img: google, onTap: () {}),
+                    Loginicon(
+                        img: google,
+                        onTap: () async {
+                          User? user = await AuthService().signInWithGoogle();
+                          if (user != null) {
+                            // Navigate to the main page or another screen
+                            Get.to(() => const MainPage());
+                          } else {
+                            // Show an error message if sign-in failed
+                            Get.snackbar('Error', 'Google Sign-In failed');
+                          }
+                        }
+                    ),
                     Loginicon(img: apple, onTap: () {}),
                   ],
                 ),
@@ -155,9 +166,6 @@ class _LogInState extends State<LogIn> {
                 MyText(text: "Don’t have an account?"),
                 TextButton(
                     onPressed: widget.showRegisterPage,
-                    // {
-                    //   Get.to(() => const Register());
-                    // },
                     child: MyText(
                         text: 'Register Now', color: GlobalColors.lightBlue))
               ],
