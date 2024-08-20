@@ -1,16 +1,41 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:project_1/constant.dart/global_colors.dart';
 import 'package:project_1/constant.dart/images.dart';
 import 'package:project_1/screens/auth/register/AddEductaion.dart';
+import 'package:project_1/services/auth_service.dart';
 import 'package:project_1/widgets/BackAppBar.dart';
 import 'package:project_1/widgets/horizontal_button.dart';
 import 'package:project_1/widgets/my_text.dart';
 // Ensure this path is correct
 
-class Personalinfo extends StatelessWidget {
+class Personalinfo extends StatefulWidget {
   const Personalinfo({super.key});
+
+  @override
+  State<Personalinfo> createState() => _PersonalinfoState();
+}
+
+class _PersonalinfoState extends State<Personalinfo> {
+  final TextEditingController birthdayController = TextEditingController();
+  final TextEditingController introductionController = TextEditingController();
+
+  void saveData() async {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    Map<String, dynamic> data = {
+      'birthday': birthdayController.text,
+      'introduction': introductionController.text,
+    };
+
+    FirestoreService().addPersonalInfo(userId, data).then((_) {
+      Get.to(() => Addeductaion()); // Navigate after saving
+    }).catchError((error) {
+      Get.snackbar('Error', 'Failed to save data: $error',
+          snackPosition: SnackPosition.BOTTOM);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,21 +119,12 @@ class Personalinfo extends StatelessWidget {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 1),
-              child: Container(
-                height: 70,
-                width: double.infinity, // Set the width to match parent width
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Color.fromARGB(255, 219, 216, 216), // Border color
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: '',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  ),
+              child: TextFormField(
+                controller: birthdayController,
+                decoration: InputDecoration(
+                  labelText: 'Enter your birthday',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
                 ),
               ),
             ),
@@ -132,22 +148,14 @@ class Personalinfo extends StatelessWidget {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Container(
-                height: 170,
-                width: 350, // Set the width to match parent width
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Color.fromARGB(255, 219, 216, 216), // Border color
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: TextFormField(
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    labelText: '',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  ),
+              child: TextFormField(
+                controller: introductionController,
+                maxLines: 5, // Allow multiple lines
+                decoration: InputDecoration(
+                  labelText: 'Write your short introduction',
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 ),
               ),
             ),
@@ -158,15 +166,16 @@ class Personalinfo extends StatelessWidget {
               child: Column(
                 children: [
                   HorizontalButton(
-                      onPressed: () {
-                        Get.to(() => Addeductaion());
-                      },
-                      text: 'Next'),
+                    onPressed:
+                        saveData, // Use saveData when the Next button is pressed
+                    text: 'Next',
+                  ),
                   SizedBox(
                     height: 10,
                   ),
                   HorizontalButton(
-                    onPressed: () {},
+                    onPressed:
+                        saveData, // Optionally use saveData for the Save and Exit as well
                     text: 'Save and Exit',
                     textColor: GlobalColors.primaryColor,
                     backgroundColor: Colors.white,

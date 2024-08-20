@@ -1,16 +1,52 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-
 import 'package:project_1/constant.dart/global_colors.dart';
-import 'package:project_1/screens/auth/register/CertificationandLicense.dart';
+import 'package:project_1/screens/jobswiper/BottomNavigation.dart';
+import 'package:project_1/services/auth_service.dart';
 import 'package:project_1/widgets/BackAppBar.dart';
 import 'package:project_1/widgets/dropdown.dart';
 import 'package:project_1/widgets/horizontal_button.dart';
 import 'package:project_1/widgets/my_text.dart';
 
-class Addeductaion extends StatelessWidget {
+class Addeductaion extends StatefulWidget {
   const Addeductaion({super.key});
+
+  @override
+  State<Addeductaion> createState() => _AddeductaionState();
+}
+
+class _AddeductaionState extends State<Addeductaion> {
+  String basicQualification = "";
+  String additionalQualification = "";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEducation();
+  }
+
+  void fetchEducation() async {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    var data = await FirestoreService().fetchEducationDetails(userId);
+    if (data != null && data['education'] != null) {
+      setState(() {
+        basicQualification = data['education']['basic'] ?? "";
+        additionalQualification = data['education']['additional'] ?? "";
+      });
+    }
+  }
+
+  void saveEducationAndNavigate() async {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    Map<String, dynamic> data = {
+      'basic': basicQualification,
+      'additional': additionalQualification
+    };
+    await FirestoreService().addEducationDetails(userId, data);
+    Get.to(() => Bottomnavigation()); // Navigate to BottomNavigation screen
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +107,11 @@ class Addeductaion extends StatelessWidget {
             Dropboxes(),
             SizedBox(height: 200), // Adjusted height to provide spacing
             HorizontalButton(
-              onPressed: () {
-                Get.to(() => Certificationandlicense());
-              },
+              onPressed: saveEducationAndNavigate,
               text: 'Next',
             ),
-            SizedBox(height: 10), // Adjusted height to provide spacing
             HorizontalButton(
-              onPressed: () {},
+              onPressed: saveEducationAndNavigate,
               text: 'Save and Exit',
               textColor: GlobalColors.primaryColor,
               backgroundColor: Colors.white,

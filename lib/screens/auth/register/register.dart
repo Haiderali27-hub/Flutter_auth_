@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:project_1/constant.dart/global_colors.dart';
 import 'package:project_1/constant.dart/images.dart';
+import 'package:project_1/screens/auth/register/name.dart';
 import 'package:project_1/widgets/BackAppBar.dart';
 import 'package:project_1/widgets/CustomTextField.dart';
 import 'package:project_1/widgets/horizontal_button.dart';
@@ -32,9 +34,14 @@ class _RegisterState extends State<Register> {
 
   Future register() async {
     if (passwordConfirmed()) {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim());
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim())
+          .then((result) {
+        // Navigate to the Name screen after successful registration
+        Get.offAll(() => Name());
+      });
     }
   }
 

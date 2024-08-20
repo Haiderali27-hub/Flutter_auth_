@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:project_1/constant.dart/global_colors.dart';
-import 'package:project_1/screens/auth/register/email.dart';
+import 'package:project_1/screens/auth/register/address.dart';
+import 'package:project_1/services/auth_service.dart';
 import 'package:project_1/widgets/BackAppBar.dart';
 import 'package:project_1/widgets/CustomTextField.dart';
 import 'package:project_1/widgets/horizontal_button.dart';
@@ -16,6 +18,16 @@ class Name extends StatefulWidget {
 }
 
 class _NameState extends State<Name> {
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +63,10 @@ class _NameState extends State<Name> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 30),
-                  child: CustomTextfield(text: ''),
+                  child: CustomTextfield(
+                    text: '',
+                    controller: firstNameController,
+                  ),
                 ),
                 SizedBox(height: 22), // Add some space between the texts
                 MyText(
@@ -60,7 +75,10 @@ class _NameState extends State<Name> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 30),
-                  child: CustomTextfield(text: ''),
+                  child: CustomTextfield(
+                    text: '',
+                    controller: lastNameController,
+                  ),
                 ),
                 SizedBox(height: 140), // Adjust the space before the buttons
                 Center(
@@ -68,7 +86,13 @@ class _NameState extends State<Name> {
                     children: [
                       HorizontalButton(
                           onPressed: () {
-                            Get.to(() => Email());
+                            FirestoreService().addUserDetails(
+                                FirebaseAuth.instance.currentUser!.uid, {
+                              'firstName': firstNameController.text,
+                              'lastName': lastNameController.text
+                            }).then((_) {
+                              Get.to(() => Address());
+                            });
                           },
                           text: 'Next'),
                       SizedBox(height: 13),
