@@ -21,6 +21,7 @@ class Personalinfo extends StatefulWidget {
 class _PersonalinfoState extends State<Personalinfo> {
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController introductionController = TextEditingController();
+  final FirestoreService firestoreService = FirestoreService();
 
   void saveData() async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -29,8 +30,8 @@ class _PersonalinfoState extends State<Personalinfo> {
       'introduction': introductionController.text,
     };
 
-    FirestoreService().addPersonalInfo(userId, data).then((_) {
-      Get.to(() => Addeductaion()); // Navigate after saving
+    firestoreService.addPersonalInfo(userId, data).then((_) {
+      Get.to(() => Addeducation()); // Navigate after saving
     }).catchError((error) {
       Get.snackbar('Error', 'Failed to save data: $error',
           snackPosition: SnackPosition.BOTTOM);
