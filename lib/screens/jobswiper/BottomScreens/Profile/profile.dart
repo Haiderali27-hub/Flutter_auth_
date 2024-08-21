@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -19,6 +20,7 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +80,7 @@ class Profile extends StatelessWidget {
                       weight: FontWeight.w600,
                     ),
                     MyText(
-                      text: 'Butcher@gmail.com',
+                      text: " ${user?.email ?? 'No email'}",
                       size: 11,
                       color: Colors.grey,
                       weight: FontWeight.w500,

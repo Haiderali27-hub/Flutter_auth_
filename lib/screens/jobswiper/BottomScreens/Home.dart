@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_1/constant.dart/global_colors.dart';
-
 import 'package:project_1/widgets/company.dart';
-
 import 'package:project_1/widgets/jobslider_appbar.dart';
 import 'package:project_1/widgets/my_text.dart';
 import 'package:project_1/widgets/workstartwidget.dart';
