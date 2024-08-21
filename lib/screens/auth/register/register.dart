@@ -32,16 +32,36 @@ class _RegisterState extends State<Register> {
     super.dispose();
   }
 
-  Future register() async {
+  Future<void> register() async {
     if (passwordConfirmed()) {
-      await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: emailController.text.trim(),
-              password: passwordController.text.trim())
-          .then((result) {
-        // Navigate to the Name screen after successful registration
-        Get.offAll(() => Name());
-      });
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: emailController.text.trim(),
+                password: passwordController.text.trim());
+
+        if (userCredential.user != null) {
+          Get.offAll(
+              () => Name()); // Using offAll to remove all previous routes
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          Get.snackbar('Error', 'The password provided is too weak.',
+              snackPosition: SnackPosition.BOTTOM);
+        } else if (e.code == 'email-already-in-use') {
+          Get.snackbar('Error', 'The account already exists for that email.',
+              snackPosition: SnackPosition.BOTTOM);
+        } else {
+          Get.snackbar('Error', e.message ?? 'Failed to register.',
+              snackPosition: SnackPosition.BOTTOM);
+        }
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to register: ${e.toString()}',
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } else {
+      Get.snackbar('Error', 'Passwords do not match',
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -80,9 +100,6 @@ class _RegisterState extends State<Register> {
               //Input field
               child: Column(
                 children: [
-                  CustomTextfield(
-                    text: 'Enter your Name',
-                  ),
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 10,

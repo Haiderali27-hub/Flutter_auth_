@@ -31,85 +31,87 @@ class _NameState extends State<Name> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Backappbar(),
-          Padding(
-            padding: EdgeInsets.only(top: 50, left: 32, right: 32),
-            child: LinearProgressIndicator(
-              value: 0.142, // Set progress value here (0.0 to 1.0)
-              backgroundColor: Colors.grey[300],
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(GlobalColors.primaryColor),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Backappbar(),
+            Padding(
+              padding: EdgeInsets.only(top: 50, left: 32, right: 32),
+              child: LinearProgressIndicator(
+                value: 0.142, // Set progress value here (0.0 to 1.0)
+                backgroundColor: Colors.grey[300],
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(GlobalColors.primaryColor),
+              ),
             ),
-          ),
-          SizedBox(
-              height:
-                  40), // Add some space between the progress bar and the rest of the content
-          Padding(
-            padding: EdgeInsets.only(left: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MyText(
-                  text: 'What is your name?',
-                  size: 25,
-                  weight: FontWeight.w500,
-                ),
-                SizedBox(height: 45), // Add some space between the texts
-                MyText(
-                  text: 'First name*',
-                  size: 13,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 30),
-                  child: CustomTextfield(
-                    text: '',
-                    controller: firstNameController,
+            SizedBox(
+                height:
+                    40), // Add some space between the progress bar and the rest of the content
+            Padding(
+              padding: EdgeInsets.only(left: 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MyText(
+                    text: 'What is your name?',
+                    size: 25,
+                    weight: FontWeight.w500,
                   ),
-                ),
-                SizedBox(height: 22), // Add some space between the texts
-                MyText(
-                  text: 'Last name*',
-                  size: 13,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 30),
-                  child: CustomTextfield(
-                    text: '',
-                    controller: lastNameController,
+                  SizedBox(height: 45), // Add some space between the texts
+                  MyText(
+                    text: 'First name*',
+                    size: 13,
                   ),
-                ),
-                SizedBox(height: 140), // Adjust the space before the buttons
-                Center(
-                  child: Column(
-                    children: [
-                      HorizontalButton(
-                          onPressed: () {
-                            FirestoreService().addUserDetails(
-                                FirebaseAuth.instance.currentUser!.uid, {
-                              'firstName': firstNameController.text,
-                              'lastName': lastNameController.text
-                            }).then((_) {
-                              Get.to(() => Address());
-                            });
-                          },
-                          text: 'Next'),
-                      SizedBox(height: 13),
-                      HorizontalButton(
-                        onPressed: () {},
-                        text: 'Save and Exit',
-                        textColor: GlobalColors.primaryColor,
-                        backgroundColor: Colors.white,
-                        bordercolor: GlobalColors.primaryColor,
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(right: 30),
+                    child: CustomTextfield(
+                      text: '',
+                      controller: firstNameController,
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 22), // Add some space between the texts
+                  MyText(
+                    text: 'Last name*',
+                    size: 13,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 30),
+                    child: CustomTextfield(
+                      text: '',
+                      controller: lastNameController,
+                    ),
+                  ),
+                  SizedBox(height: 140), // Adjust the space before the buttons
+                  Center(
+                    child: Column(
+                      children: [
+                        HorizontalButton(
+                            onPressed: () {
+                              FirestoreService().addUserDetails(
+                                  FirebaseAuth.instance.currentUser!.uid, {
+                                'firstName': firstNameController.text,
+                                'lastName': lastNameController.text
+                              }).then((_) {
+                                Get.to(() => Address());
+                              });
+                            },
+                            text: 'Next'),
+                        SizedBox(height: 13),
+                        HorizontalButton(
+                          onPressed: () {},
+                          text: 'Save and Exit',
+                          textColor: GlobalColors.primaryColor,
+                          backgroundColor: Colors.white,
+                          bordercolor: GlobalColors.primaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

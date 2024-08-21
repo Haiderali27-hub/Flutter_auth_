@@ -62,115 +62,117 @@ class _AddressState extends State<Address> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Backappbar(),
-          Padding(
-            padding: EdgeInsets.only(top: 50, left: 32, right: 32),
-            child: LinearProgressIndicator(
-              value: 0.428571429, // Set progress value here (0.0 to 1.0)
-              backgroundColor: Colors.grey[300],
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(GlobalColors.primaryColor),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Backappbar(),
+            Padding(
+              padding: EdgeInsets.only(top: 50, left: 32, right: 32),
+              child: LinearProgressIndicator(
+                value: 0.428571429, // Set progress value here (0.0 to 1.0)
+                backgroundColor: Colors.grey[300],
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(GlobalColors.primaryColor),
+              ),
             ),
-          ),
-          SizedBox(
-              height:
-                  40), // Add some space between the progress bar and the rest of the content
-          Padding(
-            padding: EdgeInsets.only(left: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MyText(
-                  text: 'Where are you located?',
-                  size: 25,
-                  weight: FontWeight.w500,
-                ),
-                SizedBox(height: 15), // Add some space between the texts
-                MyText(
-                  text: 'Country *',
-                  size: 13,
-                ),
-                Container(
-                  width: 295,
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(color: Color.fromARGB(255, 163, 159, 159)),
-                    borderRadius: BorderRadius.circular(5),
+            SizedBox(
+                height:
+                    40), // Add some space between the progress bar and the rest of the content
+            Padding(
+              padding: EdgeInsets.only(left: 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MyText(
+                    text: 'Where are you located?',
+                    size: 25,
+                    weight: FontWeight.w500,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4)),
-                      value: selectedCountry,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedCountry = newValue!;
-                        });
-                      },
-                      items: countries
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                  SizedBox(height: 15), // Add some space between the texts
+                  MyText(
+                    text: 'Country *',
+                    size: 13,
+                  ),
+                  Container(
+                    width: 295,
+                    decoration: BoxDecoration(
+                      border:
+                          Border.all(color: Color.fromARGB(255, 163, 159, 159)),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4)),
+                        value: selectedCountry,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedCountry = newValue!;
+                          });
+                        },
+                        items: countries
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 25), // Add some space between the texts
-                MyText(
-                  text: 'Street address *',
-                  size: 13,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 30),
-                  child: CustomTextfield(
-                    text: '',
-                    controller: streetController,
+                  SizedBox(height: 25), // Add some space between the texts
+                  MyText(
+                    text: 'Street address *',
+                    size: 13,
                   ),
-                ),
-                SizedBox(height: 22), // Add some space between the texts
-                MyText(
-                  text: 'City, State *',
-                  size: 13,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 30),
-                  child: CustomTextfield(
-                    text: '',
-                    controller: cityStateController,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 30),
+                    child: CustomTextfield(
+                      text: '',
+                      controller: streetController,
+                    ),
                   ),
-                ),
-                SizedBox(height: 110), // Adjust the space before the buttons
-                Center(
-                  child: Column(
-                    children: [
-                      HorizontalButton(
-                          onPressed: saveAddressDetails,
-                          // Here you might save data to Firestore or pass to next screen
-                          /* Get.to(() => Personalinfo()); */
+                  SizedBox(height: 22), // Add some space between the texts
+                  MyText(
+                    text: 'City, State *',
+                    size: 13,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 30),
+                    child: CustomTextfield(
+                      text: '',
+                      controller: cityStateController,
+                    ),
+                  ),
+                  SizedBox(height: 110), // Adjust the space before the buttons
+                  Center(
+                    child: Column(
+                      children: [
+                        HorizontalButton(
+                            onPressed: saveAddressDetails,
+                            // Here you might save data to Firestore or pass to next screen
+                            /* Get.to(() => Personalinfo()); */
 
-                          text: 'Next'),
-                      SizedBox(height: 13),
-                      HorizontalButton(
-                        onPressed: () {},
-                        text: 'Save and Exit',
-                        textColor: GlobalColors.primaryColor,
-                        backgroundColor: Colors.white,
-                        bordercolor: GlobalColors.primaryColor,
-                      ),
-                    ],
+                            text: 'Next'),
+                        SizedBox(height: 13),
+                        HorizontalButton(
+                          onPressed: () {},
+                          text: 'Save and Exit',
+                          textColor: GlobalColors.primaryColor,
+                          backgroundColor: Colors.white,
+                          bordercolor: GlobalColors.primaryColor,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

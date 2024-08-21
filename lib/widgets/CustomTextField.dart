@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomTextfield extends StatelessWidget {
+class CustomTextfield extends StatefulWidget {
   final String text;
   final double width;
   final double borderRadius;
@@ -21,23 +21,42 @@ class CustomTextfield extends StatelessWidget {
     this.obscuretext = false,
     this.controller,
     this.keyboardType = TextInputType.text,
-
   });
 
   @override
+  State<CustomTextfield> createState() => _CustomTextfieldState();
+}
+
+class _CustomTextfieldState extends State<CustomTextfield> {
+  bool _obscureText = true;
+  @override
   Widget build(BuildContext context) {
     return TextField(
-      obscureText: obscuretext,
-      keyboardType: keyboardType,
-      controller: controller,
+      obscureText: widget.obscuretext && _obscureText,
+      keyboardType: widget.keyboardType,
+      controller: widget.controller,
       decoration: InputDecoration(
-        hintText: text,
+        hintText: widget.text,
+        suffixIcon: widget.obscuretext
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
+            : null,
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: borderColorfocus, width: width)),
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            borderSide: BorderSide(
+                color: widget.borderColorfocus, width: widget.width)),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: borderColorEnable, width: width)),
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            borderSide: BorderSide(
+                color: widget.borderColorEnable, width: widget.width)),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:intl/intl.dart';
 import 'package:project_1/constant.dart/global_colors.dart';
 import 'package:project_1/constant.dart/images.dart';
 import 'package:project_1/screens/auth/register/AddEductaion.dart';
@@ -9,6 +10,7 @@ import 'package:project_1/services/auth_service.dart';
 import 'package:project_1/widgets/BackAppBar.dart';
 import 'package:project_1/widgets/horizontal_button.dart';
 import 'package:project_1/widgets/my_text.dart';
+
 // Ensure this path is correct
 
 class Personalinfo extends StatefulWidget {
@@ -122,7 +124,26 @@ class _PersonalinfoState extends State<Personalinfo> {
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 1),
               child: TextFormField(
                 controller: birthdayController,
+                readOnly:
+                    true, // Make the text field read-only since the date is picked from the calendar
                 decoration: InputDecoration(
+                  prefixIcon: IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      // The date picker is triggered when the calendar icon is pressed
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (pickedDate != null) {
+                        // Format and set the date in the controller
+                        birthdayController.text =
+                            DateFormat('yyyy-MM-dd').format(pickedDate);
+                      }
+                    },
+                  ),
                   labelText: 'Enter your birthday',
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.symmetric(horizontal: 10),
