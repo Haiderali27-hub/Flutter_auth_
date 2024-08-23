@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -11,12 +12,26 @@ import 'package:project_1/screens/jobswiper/BottomScreens/Profile/personal_detai
 import 'package:project_1/screens/jobswiper/BottomScreens/Profile/referral_program.dart';
 import 'package:project_1/screens/jobswiper/BottomScreens/Profile/settings.dart';
 import 'package:project_1/widgets/common_image)viewer.dart';
-
 import 'package:project_1/widgets/my_text.dart';
 import 'package:project_1/widgets/profile_opt.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
+
+  Future<String> _getUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      String firstName = userDoc.get('firstName') ?? 'User';
+      String lastName = userDoc.get('lastName') ?? '';
+      return '$firstName $lastName';
+    }
+    return 'User';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,13 +89,33 @@ class Profile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    MyText(
-                      text: 'Billy Butcher',
-                      size: 20,
-                      weight: FontWeight.w600,
+                    FutureBuilder<String>(
+                      future: _getUserName(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return MyText(
+                            text: 'Loading...',
+                            size: 20,
+                            weight: FontWeight.w600,
+                          );
+                        } else if (snapshot.hasError) {
+                          return MyText(
+                            text: 'Error loading name',
+                            size: 20,
+                            weight: FontWeight.w600,
+                          );
+                        } else {
+                          return MyText(
+                            text: snapshot.data ?? 'User',
+                            size: 20,
+                            weight: FontWeight.w600,
+                          );
+                        }
+                      },
                     ),
                     MyText(
-                      text: " ${user?.email ?? 'No email'}",
+                      text: "${user?.email ?? 'No email'}",
                       size: 11,
                       color: Colors.grey,
                       weight: FontWeight.w500,
@@ -110,7 +145,11 @@ class Profile extends StatelessWidget {
                     onTap: () {
                       Get.to(() => PersonalDetails());
                     }),
-                ProfileOpt(text: 'Settings', onTap: () {Get.to(() => Settings());}),
+                ProfileOpt(
+                    text: 'Logout',
+                    onTap: () {
+                      Get.to(() => Logout());
+                    }),
                 ProfileOpt(
                     text: 'Payment Method ',
                     onTap: () {

@@ -5,14 +5,14 @@ import 'package:project_1/widgets/my_text.dart';
 
 import '../../../auth/login/login.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class Logout extends StatefulWidget {
+  const Logout({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<Logout> createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsState extends State<Logout> {
   // Make the signUserOut function asynchronous
   void signUserOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
@@ -26,12 +26,13 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 0, 0, 0)),
+          icon:
+              Icon(Icons.arrow_back, color: const Color.fromARGB(255, 0, 0, 0)),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: MyText(text: 'Settings', size: 25, weight: FontWeight.bold),
+        title: MyText(text: 'Logout', size: 25, weight: FontWeight.bold),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
