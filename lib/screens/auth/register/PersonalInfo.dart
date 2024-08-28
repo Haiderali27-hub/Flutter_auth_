@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:project_1/constant.dart/global_colors.dart';
 import 'package:project_1/constant.dart/images.dart';
@@ -21,6 +25,12 @@ class Personalinfo extends StatefulWidget {
 }
 
 class _PersonalinfoState extends State<Personalinfo> {
+
+  XFile? image;
+  UploadTask? uploadTask;
+  String? imageUrl;
+
+
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController introductionController = TextEditingController();
   final FirestoreService firestoreService = FirestoreService();
@@ -39,7 +49,63 @@ class _PersonalinfoState extends State<Personalinfo> {
           snackPosition: SnackPosition.BOTTOM);
     });
   }
+  Future<void> showImageSourceDialog() async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Choose your image source'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt),
+              title: Text('Camera'),
+              onTap: () {
+                Navigator.of(context).pop();
+                pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.image),
+              title: Text('Gallery'),
+              onTap: () {
+                Navigator.of(context).pop();
+                pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
+  Future<void> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        image = pickedFile;
+      });
+
+      final file = File(image!.path);
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child(FirebaseAuth.instance.currentUser!.uid + '.jpg');
+
+      uploadTask = ref.putFile(file);
+
+      final snapshot = await uploadTask!.whenComplete(() {});
+      final urlDownload = await snapshot.ref.getDownloadURL();
+
+      print('Download-Link: $urlDownload');
+
+      setState(() {
+        imageUrl = urlDownload;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,36 +138,55 @@ class _PersonalinfoState extends State<Personalinfo> {
               ),
             ),
             SizedBox(height: 35),
-            Center(
-              child: Container(
-                height: 180,
-                width: 180,
-                decoration: BoxDecoration(
-                  color: GlobalColors.lightGray3,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 50),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          camera,
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Upload Profile Picture',
-                          style: TextStyle(
-                            color: GlobalColors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+            Align(
+              alignment: Alignment.center,
+              child: GestureDetector(
+                onTap: showImageSourceDialog,
+                child: image == null
+                    ? const CircleAvatar(
+                  radius: 70,
+                  child: Icon(Icons.camera_alt, size: 35),
+                )
+                    : ClipOval(
+                  child: Image.file(
+                    File(image!.path),
+                    fit: BoxFit.cover,
+                    width: 140,
+                    height: 140,
                   ),
                 ),
               ),
             ),
+            // Center(
+            //   child: Container(
+            //     height: 180,
+            //     width: 180,
+            //     decoration: BoxDecoration(
+            //       color: GlobalColors.lightGray3,
+            //       borderRadius: BorderRadius.circular(100),
+            //     ),
+            //     child: ClipRRect(
+            //       borderRadius: BorderRadius.circular(100),
+            //       child: Padding(
+            //         padding: const EdgeInsets.only(top: 50),
+            //         child: Column(
+            //           children: [
+            //             Image.asset(
+            //               camera,
+            //             ),
+            //             SizedBox(height: 5),
+            //             Text(
+            //               'Upload Profile Picture',
+            //               style: TextStyle(
+            //                 color: GlobalColors.grey,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.only(left: 18.0),
               child: MyText(
@@ -188,16 +273,14 @@ class _PersonalinfoState extends State<Personalinfo> {
               child: Column(
                 children: [
                   HorizontalButton(
-                    onPressed:
-                        saveData, // Use saveData when the Next button is pressed
+                    onPressed: saveData, // Use saveData when the Next button is pressed
                     text: 'Next',
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   HorizontalButton(
-                    onPressed:
-                        saveData, // Optionally use saveData for the Save and Exit as well
+                    onPressed: saveData, // Optionally use saveData for the Save and Exit as well
                     text: 'Save and Exit',
                     textColor: GlobalColors.primaryColor,
                     backgroundColor: Colors.white,
